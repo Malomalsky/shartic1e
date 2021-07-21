@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" id="msg" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        <h2>{{ article.header }}</h2>
+        <p class="card-text mt-0">URL: <a href="{{ article.url }}" target="_blank">статья</a></p>
+        <hr>
+        <p class="text-center mb-3">Краткие содержания</p>
+
+        <!-- Форма ввода. Добавить AJAX! -->
+        <div class="add-new">
+        {% if request.user.is_authenticated %}
+            {% if request.user not in authors %}
+                <form action="{% url 'create_short' article.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Short</span>
+                      </div>
+                        {{ form.text}}
+                    </div>
+                    <input type="submit" class="mt-1" value="Submit">
+                </form>
+             {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- Краткие содержания -->
+        {% for short in shorts %}
+            <div class="short-{{ short.id }}">
+                {% include 'articles/short_description.html' %}
+            </div>
+        {% endfor %}
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+			  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			  crossorigin="anonymous">
+</script>
+<script type="text/javascript">
+//$('.add-new-short').on('click', function (){
+//})
+setTimeout(function () {
+    if ($('#msg').length > 0) {
+        $('#msg').remove();
+    }
+}, 15000)
+
+</script>
+{% endblock %}

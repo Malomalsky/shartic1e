@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!--Если статей >5 -->
+    {% if page_obj %}
+        {% for article in page_obj %}
+            <p>
+                <a href="{% url 'article_detail' article.id %}">
+                    {{ article.header }} <span class="text-secondary">
+                    ({{ article.short.count }} shorts)</span>
+                </a>
+            </p>
+        {% endfor %}
+        <!-- Если статей <= 5 -->
+    {% elif articles %}
+        {% for article in articles %}
+            <p>
+                <a href="{% url 'article_detail' article.id %}">
+                    {{ article.header }} <span class="text-secondary">
+                    ({{ article.short.count }} shorts)</span>
+                </a>
+            </p>
+        {% endfor %}
+        <!--Если поиск безуспешный -->
+    {% else %}
+        <span class="text-secondary"> Nothing found. <a href="{% url 'add_new_article' %}">Click here to add new article</a></span>
+    {% endif %}
+
+    {% if page_obj.paginator.num_pages > 1 %}
+        {% include '_paginator.html' with page_obj=page_obj %}
+    {% endif %}
+
+{% endblock %}

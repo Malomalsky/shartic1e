@@ -1,0 +1,61 @@
+<div class="card m-3">
+    <div class="card-body">
+        <div class="card-text" style="margin-bottom: 5px; font-size: 17px; white-space: break-spaces">{{short.text}}</div>
+        <div class='text-secondary' style="font-size: 14px">
+          <span>posted by {{ short.author.username }} </span><span class="separator">|</span> {{ short.date_added }}
+            {% if request.user.is_authenticated %}
+            <span class="separator">|</span>
+                    {% if request.user != short.author %}
+                    <form name="upvote" class="opinion-{{ short.id }}" id="{{ short.id }}-upvote" data-short-id="{{ short.id }}" data-opinion="like"
+                          method="post"  style="display: inline">
+
+                        {% if request.user in short.likes.all %}
+                      {% csrf_token %}<a href="#" style="color: #1e7e34 !important;" class="text-secondary">you upvoted!</a>
+                        {% else %}
+                        {% csrf_token %}<a href="#" style="color: #1e7e34" class="text-secondary">upvote</a>
+                        {% endif %}
+                    </form>
+                    <span class="separator">|</span>
+                    <form name="downvote" class="opinion-{{ short.id }}" id="{{ short.id }}-downvote" data-short-id="{{ short.id }}" data-opinion="dislike"
+                          method="post" style="display: inline">
+                      {% if request.user in short.dislikes.all %}
+                        {% csrf_token %}<a href="#" style="color: #721c24 !important;" class="text-secondary" >you downvoted</a>
+                      {% else %}
+                        {% csrf_token %}<a href="#" class="text-secondary">downvote</a>
+                      {% endif %}
+                    </form>
+                    {% endif %}
+                {% else %}
+                    <a href="#">login to vote</a>
+          <span class="separator">|</span>
+            {% endif %}
+          <span>{{ short.rating }} points</span>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+			  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			  crossorigin="anonymous">
+</script>
+
+<script type="text/javascript">
+    $('.opinion-{{ short.id }}').on('click', function (){
+        let shortId = $(this).attr('data-short-id');
+        let opinion = $(this).attr('data-opinion');
+        let data = {
+            short_id: shortId,
+            opinion: opinion,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.ajax({
+            method: "POST",
+            data: data,
+            url: '{% url 'handle_opinion' %}',
+            success: function (html) {
+                $('.short-{{ short.id }}').html(html)
+            }
+        })
+    })
+</script>

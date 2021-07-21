@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2 class="text-center mb-4">Top 10 users</h2>
+    <ol type="1">
+    {% for profile in profiles %}
+        <li><span class="">{{ profile.user.username }} | {{ profile.rating }} points</span> </li>
+    {% endfor %}
+    </ol>
+{% endblock %}
