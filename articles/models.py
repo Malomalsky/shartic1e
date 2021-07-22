@@ -29,11 +29,11 @@ class ShortDescription(models.Model):
 
     @property
     def total_likes(self):
-        return self.likes.filter(id=self.author.id).count()
+        return self.likes.count()
 
     @property
     def total_dislikes(self):
-        return self.dislikes.filter(id=self.author.id).count()
+        return self.dislikes.count()
 
     @property
     def rating(self):

@@ -73,30 +73,35 @@ def search_article(request):
 def handle_opinion(request):
 
     if request.method == "POST":
-        profile = Profile.objects.get(user=request.user)
+
         short_id = request.POST.get('short_id')
         opinion = request.POST.get('opinion')
         short_obj = get_object_or_404(ShortDescription, id=short_id)
+        profile = Profile.objects.get(user=short_obj.author)
 
         if opinion == 'like':
             if short_obj.likes.filter(id=request.user.id):
                 short_obj.likes.remove(request.user)
                 profile.rating -= 1
+                profile.save()
             else:
                 if short_obj.dislikes.filter(id=request.user.id):
                     short_obj.dislikes.remove(request.user)
                 short_obj.likes.add(request.user)
                 profile.rating += 1
+                profile.save()
 
         elif opinion == 'dislike':
             if short_obj.dislikes.filter(id=request.user.id):
                 short_obj.dislikes.remove(request.user)
                 profile.rating += 1
+                profile.save()
             else:
                 if short_obj.likes.filter(id=request.user.id):
                     short_obj.likes.remove(request.user)
                 short_obj.dislikes.add(request.user)
                 profile.rating -= 1
+                profile.save()
 
         html = render_to_string(
             template_name='articles/short_description.html',
